@@ -1,34 +1,137 @@
-<form 
-  id="overtimeForm"
-  action="https://docs.google.com/forms/d/e/1FAIpQLSekJAGKdEOMtABAuTWb7SwSnFucLCCVrFEMx6VKCSWfZ2qJ0g/formResponse" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Overtime Form</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 480px;
+      margin: auto;
+      padding: 20px;
+    }
+    h2 { text-align: center; }
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .buttons button.active { background: #2563eb; color: white; }
+    button.submit { background: black; color: white; }
+    #success { text-align: center; color: green; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Overtime Form</h2>
+
+<form id="otForm"
+  action="https://docs.google.com/forms/d/e/1FAIpQLSekJAGKdEOMtABAuTWb7SwSnFucLCCVrFEMx6VKCSWfZ2qJ0g/formResponse"
   method="POST"
   target="hidden_iframe"
 >
-  <label for="employeeName">Employeeee Name:</label>
-  <input type="text" id="employeeName" placeholder="Enter yourr name" required>
-  <input type="hidden" name="entry.722339009" id="staffName">
-  <button type="submit">Submit</button>
+
+  <!-- Staff Name -->
+  <input type="text" id="name" placeholder="Staff Name" required>
+  <input type="hidden" name="entry.722339009" id="nameHidden">
+
+  <!-- Date -->
+  <input type="date" id="date" required>
+  <input type="hidden" name="entry.105445944_year" id="date_year">
+  <input type="hidden" name="entry.105445944_month" id="date_month">
+  <input type="hidden" name="entry.105445944_day" id="date_day">
+
+  <!-- OT Type -->
+  <label>Overtime Type</label>
+  <div class="buttons" id="otButtons">
+    <button type="button" onclick="setOT('Weekday OT', this)">Weekday</button>
+    <button type="button" onclick="setOT('Weekend OT', this)">Weekend</button>
+    <button type="button" onclick="setOT('Public Holiday', this)">Holiday</button>
+  </div>
+  <input type="hidden" name="entry.363458102" id="otType" required>
+
+  <!-- Hours -->
+  <input type="number" id="hours" step="0.5" placeholder="Hours" required>
+  <input type="hidden" name="entry.1530886699" id="hoursHidden">
+
+  <div class="buttons small">
+    <button type="button" onclick="addHours(1)">+1</button>
+    <button type="button" onclick="addHours(2)">+2</button>
+    <button type="button" onclick="addHours(4)">+4</button>
+  </div>
+
+  <!-- Notes -->
+  <textarea id="notes" placeholder="Notes (optional)"></textarea>
+  <input type="hidden" name="entry.1880690098" id="notesHidden">
+
+  <button type="submit" class="submit">Submit Overtime</button>
+
 </form>
 
 <iframe name="hidden_iframe" style="display:none;"></iframe>
+<p id="success" hidden>✔ Overtime submitted</p>
 
 <script>
-  const nameInput = document.getElementById('employeeName');
-  const hiddenInput = document.getElementById('staffName');
-  const form = document.getElementById('overtimeForm');
+  const form = document.getElementById('otForm');
 
-  // Keep hidden input synced with visible input
-  nameInput.addEventListener('input', () => {
-    hiddenInput.value = nameInput.value;
+  // Sync visible fields to hidden inputs
+  document.getElementById('name').addEventListener('input', e => {
+    document.getElementById('nameHidden').value = e.target.value;
   });
 
-  // Clear form after submission
+  const dateInput = document.getElementById('date');
+  dateInput.addEventListener('input', () => {
+    const d = new Date(dateInput.value);
+    document.getElementById('date_year').value = d.getFullYear();
+    document.getElementById('date_month').value = d.getMonth() + 1; // JS months start at 0
+    document.getElementById('date_day').value = d.getDate();
+  });
+
+  const hoursInput = document.getElementById('hours');
+  hoursInput.addEventListener('input', e => {
+    document.getElementById('hoursHidden').value = e.target.value;
+  });
+
+  const notesInput = document.getElementById('notes');
+  notesInput.addEventListener('input', e => {
+    document.getElementById('notesHidden').value = e.target.value;
+  });
+
+  // OT Type buttons
+  function setOT(value, btn) {
+    document.getElementById('otType').value = value;
+    document.querySelectorAll('#otButtons button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Quick hours buttons
+  function addHours(n) {
+    const h = parseFloat(hoursInput.value || 0) + n;
+    hoursInput.value = h.toFixed(1);
+    document.getElementById('hoursHidden').value = hoursInput.value;
+  }
+
+  // Default date = today
+  dateInput.valueAsDate = new Date();
+  const event = new Event('input');
+  dateInput.dispatchEvent(event);
+
+  // Clear form + show success message after submit
   form.addEventListener('submit', () => {
-    // Give it a tiny delay to ensure submission goes through
     setTimeout(() => {
-      nameInput.value = '';
-      hiddenInput.value = '';
-      alert("Form submitted successfully!"); // optional feedback
-    }, 100); 
+      form.reset();
+      document.querySelectorAll('#otButtons button').forEach(b => b.classList.remove('active'));
+      document.getElementById('success').hidden = false;
+      setTimeout(() => {
+        document.getElementById('success').hidden = true;
+      }, 3000);
+    }, 150);
   });
 </script>
