@@ -3,30 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Overtime Form</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 480px;
-      margin: auto;
-      padding: 20px;
-    }
-    h2 { text-align: center; }
-    input, textarea, button {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .buttons button.active { background: #2563eb; color: white; }
-    button.submit { background: black; color: white; }
-    #success { text-align: center; color: green; margin-top: 10px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -51,9 +28,10 @@
   <!-- OT Type -->
   <label>Overtime Type</label>
   <div class="buttons" id="otButtons">
-    <button type="button" onclick="setOT('Weekday OT', this)">Weekday</button>
-    <button type="button" onclick="setOT('Weekend OT', this)">Weekend</button>
-    <button type="button" onclick="setOT('Public Holiday', this)">Holiday</button>
+    <button type="button" onclick="setOT('Playground Duty', this)">Playground</button>
+    <button type="button" onclick="setOT('Lunch Duty', this)">Lunch</button>
+    <button type="button" onclick="setOT('Classroom Cover', this)">Classroom</button>
+    <button type="button" onclick="setOT('Other Cover', this)">Other specify in notes</button>
   </div>
   <input type="hidden" name="entry.363458102" id="otType" required>
 
@@ -135,3 +113,4 @@
     }, 150);
   });
 </script>
+
